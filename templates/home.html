@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>jobBacho AI</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #000;
+            color: #fff;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 900px;
+            margin: 60px auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 42px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #aaa;
+            font-size: 18px;
+        }
+
+        .card {
+            background: #111;
+            border: 1px solid #333;
+            border-radius: 16px;
+            padding: 30px;
+        }
+
+        .card h2 {
+            margin-top: 0;
+        }
+
+        .info {
+            background: #181818;
+            border-left: 3px solid #fff;
+            padding: 15px;
+            margin: 20px 0;
+            color: #ccc;
+            line-height: 1.6;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 250px;
+            resize: vertical;
+            background: #050505;
+            color: #fff;
+            border: 1px solid #444;
+            border-radius: 10px;
+            padding: 15px;
+            font-size: 15px;
+            outline: none;
+        }
+
+        textarea:focus {
+            border-color: #fff;
+        }
+
+        button {
+            width: 100%;
+            margin-top: 20px;
+            padding: 15px;
+            background: #fff;
+            color: #000;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #ddd;
+        }
+
+        .result-card {
+            margin-top: 30px;
+            background: #111;
+            border: 1px solid #333;
+            border-radius: 16px;
+            padding: 30px;
+        }
+
+        .risk-score {
+            text-align: center;
+            padding: 25px;
+            background: #181818;
+            border-radius: 12px;
+            margin: 20px 0;
+        }
+
+        .risk-score h1 {
+            font-size: 50px;
+            margin: 0;
+        }
+
+        .risk-score h3 {
+            color: #aaa;
+        }
+
+        .section {
+            border-top: 1px solid #333;
+            padding-top: 20px;
+            margin-top: 25px;
+        }
+
+        .section li {
+            margin-bottom: 10px;
+            color: #ccc;
+        }
+
+        .section p {
+            color: #ccc;
+            line-height: 1.7;
+        }
+
+        .submitted-message {
+            margin-top: 20px;
+            color: #aaa;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="header">
+        <h1>🛡️ jobBacho AI</h1>
+        <p>Check a job before you apply.</p>
+    </div>
+
+
+    <div class="card">
+
+        <h2>🔍 Check a Job Offer</h2>
+
+        <div class="info">
+            <strong>What should you paste?</strong><br><br>
+
+            Paste the complete job message you received through
+            <strong>Email, WhatsApp, Telegram, SMS, LinkedIn</strong>
+            or any other platform.
+
+            <br><br>
+
+            Include details such as:
+            <br>
+            • Company name<br>
+            • Job role<br>
+            • Salary offered<br>
+            • Contact details<br>
+            • Payment or registration requests<br>
+            • Interview instructions<br>
+            • Website or email mentioned in the message
+        </div>
+
+
+        <form method="POST">
+
+            {% csrf_token %}
+
+            <textarea
+                name="job_message"
+                placeholder="Example:
+
+Congratulations! You have been selected for a Software Developer position.
+
+Salary: ₹45,000/month
+
+To confirm your position, you need to pay a registration fee of ₹2,000.
+
+Contact us on WhatsApp to complete the process..."
+                required></textarea>
+
+            <button type="submit">
+                🛡️ Analyze Job
+            </button>
+
+        </form>
+
+    </div>
+
+
+    {% if message %}
+
+        <div class="submitted-message">
+            <strong>📩 Message received</strong>
+        </div>
+
+    {% endif %}
+
+
+    {% if result %}
+
+    <div class="result-card">
+
+        <h2>🛡️ Job Analysis</h2>
+
+        <div class="risk-score">
+
+            <h1>{{ result.risk_score }}/100</h1>
+
+            <h3>{{ result.risk_level }}</h3>
+
+        </div>
+
+
+        <div class="section">
+
+            <h3>🚩 Red Flags</h3>
+
+            <ul>
+
+                {% for flag in result.red_flags %}
+
+                    <li>{{ flag }}</li>
+
+                {% endfor %}
+
+            </ul>
+
+        </div>
+
+
+        <div class="section">
+
+            <h3>🔍 Why is this suspicious?</h3>
+
+            <p>
+                {{ result.explanation }}
+            </p>
+
+        </div>
+
+
+        <div class="section">
+
+            <h3>✅ Recommendation</h3>
+
+            <p>
+                {{ result.recommendation }}
+            </p>
+
+        </div>
+
+    </div>
+
+    {% endif %}
+
+</div>
+
+</body>
+</html>
