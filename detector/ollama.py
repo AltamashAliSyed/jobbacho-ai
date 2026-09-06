@@ -48,20 +48,21 @@ Rules:
 
     api_key = os.environ.get("OLLAMA_API_KEY")
 
+    if not api_key:
+        raise Exception("OLLAMA_API_KEY is not configured")
+
     response = requests.post(
         "https://ollama.com/api/generate",
-
         headers={
-            "Authorization": f"Bearer {api_key}"
+            "Authorization": f"Bearer {api_key}",
+            "Content-Type": "application/json"
         },
-
         json={
-            "model": "llama3.2",
+            "model": "gpt-oss:120b",
             "prompt": prompt,
             "stream": False,
             "format": "json"
         },
-
         timeout=120
     )
 
