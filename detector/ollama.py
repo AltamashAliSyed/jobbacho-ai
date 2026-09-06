@@ -1,15 +1,19 @@
 import requests
 import json
+import os
+
 
 def analyze_job(message):
+
     prompt = f"""
-You are JobShield AI, a job scam risk analyzer.
+You are JobBacho AI, a job scam risk analyzer.
 
 Analyze this job message:
 
 {message}
 
 Look for:
+
 - Payment or registration fees
 - Requests for deposits
 - WhatsApp/Telegram-only communication
@@ -31,6 +35,7 @@ Return ONLY valid JSON in this exact format:
 }}
 
 Rules:
+
 - risk_score must be between 0 and 100.
 - LOW = 0-25
 - MODERATE = 26-50
@@ -41,15 +46,26 @@ Rules:
 - Do not add text outside the JSON.
 """
 
+    api_key = os.environ.get("OLLAMA_API_KEY")
+
     response = requests.post(
-        "http://localhost:11434/api/generate",
-            json={
+        "https://ollama.com/api/generate",
+
+        headers={
+            "Authorization": f"Bearer {api_key}"
+        },
+
+        json={
             "model": "llama3.2",
             "prompt": prompt,
             "stream": False,
             "format": "json"
-            }
+        },
+
+        timeout=120
     )
+
+    response.raise_for_status()
 
     result = response.json()
 

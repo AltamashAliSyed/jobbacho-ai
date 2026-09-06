@@ -7,4 +7,4 @@ def detector(request):
     if request.method =="POST":
         message=request.POST.get("job_message")
         result = analyze_job(message)
-    return render(request,'home.html',{"message":message,"result":result})
+    return render(request,'detector/home.html',{"message":message,"result":result})
